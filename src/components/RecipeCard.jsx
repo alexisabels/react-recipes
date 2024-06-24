@@ -1,12 +1,28 @@
 import { Heart, HeartPulse, Soup } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
 function RecipeCard({ recipe, bg, badge }) {
   const getTwoValuesFromArray = (arr) => {
     return [arr[0], arr[1]];
   };
   const healthLabels = getTwoValuesFromArray(recipe.healthLabels);
-
+  const [isFavorite, setIsFavorite] = useState(
+    localStorage.getItem("favorites")?.includes(recipe.label)
+  );
+  const addRecipeToFavorites = () => {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const isRecipeInFavorites = favorites.some(
+      (fav) => fav.label == recipe.label
+    );
+    if (isRecipeInFavorites) {
+      favorites.filter((fav) => fav.label !== recipe.label);
+      setIsFavorite(false);
+    } else {
+      favorites.push(recipe);
+      setIsFavorite(true);
+    }
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  };
   return (
     <>
       <div
@@ -25,11 +41,23 @@ function RecipeCard({ recipe, bg, badge }) {
           <div className="absolute bottom-2 left-2 bg-white rounded-full p-1 cursor-pointer flex items-center gap-1 text-sm">
             <Soup size={24} /> {recipe.yield} Servings
           </div>
-          <div className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer">
-            <Heart
-              className="hover:fill-red-500 hover:text-red-500"
-              size={20}
-            />
+          <div
+            className="absolute top-1 right-2 bg-white rounded-full p-1 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              addRecipeToFavorites();
+            }}
+          >
+            {!isFavorite && (
+              <Heart
+                className="hover:fill-red-500 hover:text-red-500"
+                size={20}
+              />
+            )}
+
+            {isFavorite && (
+              <Heart className="fill-red-500 text-red-500" size={20} />
+            )}
           </div>
         </a>
         <div className="flex mt-1">
