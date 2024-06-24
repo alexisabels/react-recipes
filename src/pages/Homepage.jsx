@@ -3,8 +3,9 @@ import { Search } from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
 import { useEffect, useState } from "react";
 import { getRandomColor } from "../lib/utils";
-const APP_ID = "02972313";
-const APP_KEY = "4d20fae25f6650c77860168a47abe756";
+
+const APP_ID = import.meta.env.VITE_APP_ID;
+const APP_KEY = import.meta.env.VITE_APP_KEY;
 const Homepage = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,26 +27,30 @@ const Homepage = () => {
   useEffect(() => {
     fetchRecipes("chicken");
   }, []);
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchRecipes(e.target[0].value);
+  };
   return (
     <>
       <div className="bg-[#faf9fb] p-10 flex-1">
         <div className="max-w-screen-lg mx-auto ">
-          <form>
+          <form onSubmit={handleSearch}>
             {" "}
             <label className="input shadow-md flex items-center gap-2">
               <Search size={24} />
               <input
                 type="text"
                 className="text-sm md:text-md grow"
-                placeholder="¿Qué quieres cocinar hoy?"
+                placeholder="What do you want to cook today?"
               />
             </label>
           </form>
           <h1 className="font-bold text-3xl md:text-5xl mt-4">
-            Recetas recomendadas
+            Recommended recipes
           </h1>
           <p className="text-slate-500 font-semibold ml-1 my-2 text-sm tracking-tight">
-            Opciones populares
+            Popular choices
           </p>
           <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {!loading &&
